@@ -14,6 +14,11 @@ import typeorm from './config/typeorm.js';
 //-----------------Middlewares---------------------//
 import { LoggerMiddleware } from './middlewares/logger.middleware.js';
 
+//-------------------------------------------------//
+//--------------------Modulos----------------------//
+import { AuthModule } from './auth/auth.module.js';
+import { UsersModule } from './users/users.module.js';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,6 +29,8 @@ import { LoggerMiddleware } from './middlewares/logger.middleware.js';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('typeorm')!,
     }),
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
