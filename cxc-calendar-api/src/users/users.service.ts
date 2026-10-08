@@ -7,6 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 
 //-------------------------------------------------//
 //----------------------DTOs-----------------------//
@@ -17,6 +18,8 @@ import { UpdateUserDto } from './dto/update-user.dto.js';
 //-------------Entities y Repositories-------------//
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity.js';
+
+import { BCRYPT_SALT_ROUNDS } from '../config/envs.js';
 
 @Injectable()
 export class UsersService {
@@ -34,11 +37,17 @@ export class UsersService {
     if (userFound) {
       throw new ConflictException('El email ya existe.');
     }
-    // Hash de la contraseña
-    //const passwordHashed: string = await bcrypt.hash(user.password_hash, SALT);
+    // Hashear de la contraseña
+    const passwordHashed: string = await bcrypt.hash(
+      newUser.password,
+      BCRYPT_SALT_ROUNDS,
+    );
 
     //Creacion del usuario
-    const userCreated: User = this.usersRepository.create(newUser);
+    const userCreated: User = this.usersRepository.create({
+      ...newUser,
+      password_hashed: passwordHashed,
+    });
 
     if (!userCreated) {
       throw new BadRequestException('No se pudo registrar al usuario.');
@@ -47,7 +56,7 @@ export class UsersService {
     //Guardado del usuario
     const completeUser: User = await this.usersRepository.save(userCreated);
 
-    const { password_hashed, is_admin, ...partialUser } = completeUser;
+    const { id, password_hashed, is_admin, ...partialUser } = completeUser;
 
     return {
       message: 'Registro exitoso.',

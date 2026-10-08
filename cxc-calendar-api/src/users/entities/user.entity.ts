@@ -51,8 +51,8 @@ export class User {
 
   @Column({
     type: 'boolean',
-    default: false,
-    nullable: true,
+    default: true,
+    nullable: false,
   })
   is_active: boolean;
 }
