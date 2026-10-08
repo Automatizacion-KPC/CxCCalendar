@@ -31,20 +31,6 @@ export class UsersController {
 
   //---------------------------------------//
   @ApiOperation({
-    summary: 'Devolver busqueda de usario específico',
-    description: 'Devuelve un usuario en específico.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuario obtenido exitosamente',
-  })
-  @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.findOne(id);
-  }
-
-  //---------------------------------------//
-  @ApiOperation({
     summary: 'Devolver array de usuarios registrados.',
     description:
       'Devuelve una lista de todos los usuarios. Puede filtrarse para obtener únicamente los activos o inactivos usando ?active.',
@@ -68,18 +54,17 @@ export class UsersController {
 
   //---------------------------------------//
   @ApiOperation({
-    summary: 'Actualizar usuario a partir de su id.',
-    description: 'Actualiza los campos de un usuario buscándolo por su id.',
+    summary: 'Devolver busqueda de usario específico',
+    description: 'Devuelve un usuario en específico.',
   })
   @ApiResponse({
     status: 200,
-    description: 'Usuario actualizado exitosamente.',
+    description: 'Usuario obtenido exitosamente',
   })
-  @Patch(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() user: UpdateUserDto) {
-    return this.usersService.update(id, user);
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.usersService.findOne(id);
   }
-
   //---------------------------------------//
   @ApiOperation({
     summary: 'Actualizar usuario a Admin.',
@@ -93,6 +78,20 @@ export class UsersController {
   @Patch('/admin/:id')
   updateToAdmin(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.updateToAdmin(id);
+  }
+
+  //---------------------------------------//
+  @ApiOperation({
+    summary: 'Actualizar usuario a partir de su id.',
+    description: 'Actualiza los campos de un usuario buscándolo por su id.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario actualizado exitosamente.',
+  })
+  @Patch(':id')
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() user: UpdateUserDto) {
+    return this.usersService.update(id, user);
   }
 
   //---------------------------------------//

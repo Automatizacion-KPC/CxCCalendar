@@ -61,20 +61,6 @@ export class UsersService {
       user: partialUser,
     };
   }
-  //---------------------------------------//
-  async findOne(id: string) {
-    const user: User | null = await this.usersRepository.findOne({
-      where: { id },
-    });
-    if (!user) {
-      throw new NotFoundException(`Usuario con id: ${id} no encontrado`);
-    }
-    const { password_hashed, is_admin, ...partialUser } = user;
-    return {
-      message: 'Usuario obtenido exitosamente.',
-      user: partialUser,
-    };
-  }
 
   //---------------------------------------//
   async findAll(isActive?: boolean) {
@@ -101,22 +87,16 @@ export class UsersService {
   }
 
   //---------------------------------------//
-  async update(id: string, userToUpdate: UpdateUserDto) {
-    const user: User | undefined = await this.usersRepository.preload({
-      id,
-      ...userToUpdate,
+  async findOne(id: string) {
+    const user: User | null = await this.usersRepository.findOne({
+      where: { id },
     });
-
     if (!user) {
       throw new NotFoundException(`Usuario con id: ${id} no encontrado`);
     }
-
-    const updatedUser = await this.usersRepository.save(user);
-
-    const { password_hashed, is_admin, ...partialUser } = updatedUser;
-
+    const { password_hashed, is_admin, ...partialUser } = user;
     return {
-      message: 'Usuario actualizado exitosamente.',
+      message: 'Usuario obtenido exitosamente.',
       user: partialUser,
     };
   }
@@ -138,6 +118,27 @@ export class UsersService {
 
     return {
       message: 'Usuario actualizado a administrador exitosamente.',
+      user: partialUser,
+    };
+  }
+
+  //---------------------------------------//
+  async update(id: string, userToUpdate: UpdateUserDto) {
+    const user: User | undefined = await this.usersRepository.preload({
+      id,
+      ...userToUpdate,
+    });
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con id: ${id} no encontrado`);
+    }
+
+    const updatedUser = await this.usersRepository.save(user);
+
+    const { password_hashed, is_admin, ...partialUser } = updatedUser;
+
+    return {
+      message: 'Usuario actualizado exitosamente.',
       user: partialUser,
     };
   }
