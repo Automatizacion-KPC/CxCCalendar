@@ -11,5 +11,5 @@ import { CreateUserDto } from '../../users/dto/create-user.dto.js'
 //-------------------------------------------------//
 export class LoginDto extends PickType(CreateUserDto, [
   'email',
-  'password_hash',
+  'password',
 ]) {}

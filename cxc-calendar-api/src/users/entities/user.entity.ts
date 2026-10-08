@@ -1,14 +1,9 @@
 //-------------------------------------------------//
 //---------------------Librerias-------------------//
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 //-------------------------------------------------//
 //--------------------Entities---------------------//
-
 
 //-------------------------------------------------//
 //-------------------------------------------------//
@@ -28,10 +23,10 @@ export class User {
 
   @Column({
     type: 'varchar',
-    length: 150,
+    length: 200,
     nullable: false,
   })
-  password_hash: string;
+  password_hashed: string;
 
   @Column({
     type: 'varchar',
@@ -41,10 +36,23 @@ export class User {
   name: string;
 
   @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: false,
+  })
+  department: string;
+
+  @Column({
     type: 'boolean',
     default: false,
     nullable: true,
   })
   is_admin: boolean;
 
+  @Column({
+    type: 'boolean',
+    default: false,
+    nullable: true,
+  })
+  is_active: boolean;
 }

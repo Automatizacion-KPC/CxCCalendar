@@ -15,7 +15,6 @@ import {
   Validate,
 } from 'class-validator';
 
-
 //-------------------------------------------------//
 //-------------------------------------------------//
 //-------------------------------------------------//
@@ -42,7 +41,7 @@ export class CreateUserDto {
     message:
       'La contraseña debe tener al menos 8 caracteres y máximo 15, debe poseer al menos una minúscula, una mayúscula, un número y un caracter especial.',
   })
-  password_hash: string;
+  password: string;
 
   @ApiProperty({
     description:
@@ -55,8 +54,11 @@ export class CreateUserDto {
   name: string;
 
   @ApiProperty({
-    description: 'No se debe recibir la propiedad y es de tipo boolean.',
+    description: 'Nombre del Departamento al que pertenece.',
+    example: 'VENTAS',
   })
-  @IsEmpty()
-  is_admin?: boolean;
+  @IsNotEmpty()
+  @IsString()
+  @Length(3, 50)
+  department: string;
 }

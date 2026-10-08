@@ -32,7 +32,7 @@ export class UsersService {
     });
 
     if (userFound) {
-      throw new ConflictException('Email already exist.');
+      throw new ConflictException('El email ya existe.');
     }
     // Hash de la contraseña
     //const passwordHashed: string = await bcrypt.hash(user.password_hash, SALT);
@@ -41,27 +41,27 @@ export class UsersService {
     const userCreated: User = this.usersRepository.create(newUser);
 
     if (!userCreated) {
-      throw new BadRequestException("User couldn't be created.");
+      throw new BadRequestException('No se pudo registrar al usuario.');
     }
 
     //Guardado del usuario
     const completeUser: User = await this.usersRepository.save(userCreated);
 
-    const { password_hash, is_admin, ...partialUser } = completeUser;
+    const { password_hashed, is_admin, ...partialUser } = completeUser;
 
     return {
-      message: 'User sign up successfully.',
+      message: 'Registro exitoso.',
       user: partialUser,
     };
   }
 
   async findAll() {
     const users: User[] = await this.usersRepository.find();
-    if (!users) {
-      throw new NotFoundException('Users not found');
+    if (!users || users.length === 0) {
+      throw new NotFoundException('No se encontraron usuarios.');
     }
 
-    return { message: 'Users found.', users };
+    return { message: 'Lista de usuarios obtenida exitosamente.', users };
   }
 
   findOne(id: number) {
