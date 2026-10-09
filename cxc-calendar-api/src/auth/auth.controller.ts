@@ -17,6 +17,6 @@ export class AuthController {
 
   @Post()
   singIn(@Body() credential: LoginDto) {
-    return this.authService.login(credential);
+    return this.authService.singIn(credential);
   }
 }

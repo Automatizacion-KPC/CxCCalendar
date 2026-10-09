@@ -9,3 +9,4 @@ export const DB_USER = process.env.DB_USER;
 export const DB_PASSWORD = process.env.DB_PASSWORD;
 
 export const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS);
+export const JWT_SECRET = process.env.JWT_SECRET;

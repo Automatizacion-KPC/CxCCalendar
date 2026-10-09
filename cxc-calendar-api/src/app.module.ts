@@ -3,6 +3,7 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
 //-------------------------------------------------//
 //----------Controladores y Proveedores------------//
@@ -19,6 +20,8 @@ import { LoggerMiddleware } from './middlewares/logger.middleware.js';
 import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 
+import { JWT_SECRET } from './config/envs.js';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +31,11 @@ import { UsersModule } from './users/users.module.js';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('typeorm')!,
+    }),
+    JwtModule.register({
+      global: true,
+      secret: JWT_SECRET,
+      signOptions: { expiresIn: '1h' },
     }),
     AuthModule,
     UsersModule,

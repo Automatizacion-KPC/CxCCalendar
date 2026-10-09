@@ -27,6 +27,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
   ) {}
+
   //---------------------------------------//
   async create(newUser: CreateUserDto) {
     //Verificacion de la existencia del email
