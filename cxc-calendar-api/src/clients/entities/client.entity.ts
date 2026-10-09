@@ -2,54 +2,58 @@
 //---------------------Librerias-------------------//
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-
 //-------------------------------------------------//
 //-------------------------------------------------//
-@Entity({ name: 'users' })
-export class User {
+@Entity({ name: 'clients' })
+export class Client {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
     type: 'varchar',
-    length: 50,
+    length: 15,
     nullable: false,
     unique: true,
   })
-  email: string;
+  gov_id: string;
 
   @Column({
     type: 'varchar',
     length: 200,
     nullable: false,
-  })
-  password_hashed: string;
-
-  @Column({
-    type: 'varchar',
-    length: 50,
-    nullable: false,
+    unique: true,
   })
   name: string;
 
   @Column({
     type: 'varchar',
-    length: 50,
-    nullable: false,
+    length: 7,
+    unique: true,
   })
-  department: string;
+  sap_id: string;
 
   @Column({
-    type: 'boolean',
-    default: false,
-    nullable: true,
+    type: 'varchar',
+    length: 10,
+    unique: true,
   })
-  is_admin: boolean;
+  microsip_id: string;
+
+  @Column({
+    type: 'varchar',
+    length: 2,
+  })
+  management_status: string;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+  })
+  management_description: string;
 
   @Column({
     type: 'boolean',
     default: true,
-    nullable: false,
   })
-  is_active: boolean;
+  status: boolean;
 }
