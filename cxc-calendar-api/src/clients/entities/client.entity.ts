@@ -27,14 +27,14 @@ export class Client {
 
   @Column({
     type: 'varchar',
-    length: 7,
+    length: 6,
     unique: true,
   })
   sap_id: string;
 
   @Column({
     type: 'varchar',
-    length: 10,
+    length: 8,
     unique: true,
   })
   microsip_id: string;
@@ -44,12 +44,6 @@ export class Client {
     length: 2,
   })
   management_status: string;
-
-  @Column({
-    type: 'varchar',
-    length: 50,
-  })
-  management_description: string;
 
   @Column({
     type: 'boolean',
