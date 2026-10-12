@@ -7,7 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 
 //--------------------------------------------------//
 //--------------------Variables---------------------//
@@ -20,22 +19,20 @@ import { Role } from '../enums/rol.enum.js';
 export class AuthGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     //Obtener la request
     const request = context.switchToHttp().getRequest();
 
     //Obtener la autentificacion de los headers
-    const auth = request.headers.authorization; //"Bearer token"
+    const authHeader = request.headers.authorization; //"Bearer token"
 
     //Realizar las validaciones
-    if (!auth) {
+    if (!authHeader) {
       throw new UnauthorizedException(
         'No se posee la autorización para realizar la acción.',
       );
     }
-    const token: string = auth.split(' ')[1]; // "token"
+    const token: string = authHeader.split(' ')[1]; // "token"
     if (!token) {
       throw new UnauthorizedException(
         'No se posee la autorización para realizar la acción.',
@@ -46,7 +43,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       //{id, email, isAdmin}
-      const payload = this.jwtService.verify(token, { secret });
+      const payload = await this.jwtService.verifyAsync(token, { secret });
 
       //{id, email, isAdmin}
       if (payload.isAdmin) {
@@ -62,7 +59,9 @@ export class AuthGuard implements CanActivate {
       return true;
     } catch (error) {
       console.log(error);
-      return false;
+      throw new UnauthorizedException(
+        'No se posee la autorización para realizar la acción.',
+      );
     }
   }
 }
