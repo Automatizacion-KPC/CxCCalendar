@@ -40,14 +40,14 @@ export class ClientsController {
   @ApiOperation({
     summary: 'Devolver array de clientes registrados.',
     description:
-      'Devuelve una lista de todos los usuarios. Puede filtrarse para obtener únicamente los activos o inactivos usando "?active" o por vendedor usando "?seller".',
+      'Devuelve una lista de todos los clientes. Puede filtrarse para obtener únicamente los activos o inactivos usando "?active" o por vendedor usando "?seller".',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista de clientes obtenida exitosamente.',
   })
   @Get()
-  findAll(@Query('active') active?: string, @Query('active') seller?: string) {
+  findAll(@Query('active') active?: string, @Query('seller') seller?: string) {
     let isActiveFilter: boolean | undefined = undefined;
 
     if (active === 'true') {
@@ -55,21 +55,51 @@ export class ClientsController {
     } else if (active === 'false') {
       isActiveFilter = false; // Solo inactivos
     }
-    return this.clientsService.findAll(isActiveFilter);
+    return this.clientsService.findAll(isActiveFilter, seller);
   }
 
+  //---------------------------------------//
+  @ApiOperation({
+    summary: 'Devolver busqueda de cliente específico',
+    description: 'Devuelve un cliente en específico.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Cliente obtenido exitosamente',
+  })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.clientsService.findOne(id);
   }
 
+  //---------------------------------------//
+  @ApiOperation({
+    summary: 'Actualizar cliente a partir de su id.',
+    description: 'Actualiza los campos de un cliente buscándolo por su id.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Cliente actualizado exitosamente.',
+  })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
-    return this.clientsService.update(+id, updateClientDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() client: UpdateClientDto,
+  ) {
+    return this.clientsService.update(id, client);
   }
 
+  //---------------------------------------//
+  @ApiOperation({
+    summary: 'Desactivar cliente a partir de su id.',
+    description: 'Desactiva un cliente buscándolo por su id.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Cliente desactivado exitosamente.',
+  })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientsService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.clientsService.remove(id);
   }
 }

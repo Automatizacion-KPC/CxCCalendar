@@ -72,6 +72,7 @@ export class UsersController {
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }
+
   //---------------------------------------//
   @ApiOperation({
     summary: 'Actualizar usuario a Admin.',

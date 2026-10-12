@@ -15,7 +15,7 @@ import { UpdateClientDto } from './dto/update-client.dto.js';
 
 //-------------------------------------------------//
 //-------------Entities y Repositories-------------//
-import { Repository } from 'typeorm';
+import { Repository, FindOptionsWhere, Not } from 'typeorm';
 import { Client } from './entities/client.entity.js';
 
 import { sanitizeObject } from '../helpers/string.helper.js';
@@ -34,12 +34,26 @@ export class ClientsService {
     // Limpia todas las propiedades tipo string del DTO a mayúsculas, sin acentos ni especiales
     const cleanClient = sanitizeObject(newClient);
 
-    //Verificacion de la razón Social
     const clientFound: Client | null = await this.clientsRepository.findOne({
-      where: { name: cleanClient.name },
+      where: [
+        { name: cleanClient.name },
+        { sap_id: cleanClient.sap_id },
+        { microsip_id: cleanClient.microsip_id },
+      ],
     });
+
     if (clientFound) {
-      throw new ConflictException('La razón Social ya existe.');
+      if (clientFound.name === cleanClient.name) {
+        throw new ConflictException('La Razón Social ya existe.');
+      }
+      if (clientFound.sap_id === cleanClient.sap_id) {
+        throw new ConflictException('La clave SAP ya se encuentra registrada.');
+      }
+      if (clientFound.microsip_id === cleanClient.microsip_id) {
+        throw new ConflictException(
+          'La clave Microsip ya se encuentra registrada.',
+        );
+      }
     }
 
     //Creacion y guardado del cliente
@@ -57,8 +71,16 @@ export class ClientsService {
   }
 
   //---------------------------------------//
-  async findAll(isActive?: boolean) {
-    const whereCondition = isActive !== undefined ? { status: isActive } : {};
+  async findAll(isActive?: boolean, seller?: string) {
+    const whereCondition: FindOptionsWhere<Client> = {};
+
+    if (isActive !== undefined) {
+      whereCondition.status = isActive;
+    }
+
+    if (seller) {
+      whereCondition.seller = seller; // Filtra por cadenas como "VENTAS_1", "VENTAS_2", etc.
+    }
 
     const clients: Client[] = await this.clientsRepository.find({
       where: whereCondition,
@@ -74,15 +96,105 @@ export class ClientsService {
   }
 
   //---------------------------------------//
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async findOne(id: string) {
+    const client: Client | null = await this.clientsRepository.findOne({
+      where: { id },
+    });
+
+    if (!client) {
+      throw new NotFoundException(`Cliente con id: ${id} no encontrado`);
+    }
+
+    return {
+      message: 'Usuario obtenido exitosamente.',
+      client: client,
+    };
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  //---------------------------------------//
+  async update(id: string, clientToUpdate: UpdateClientDto) {
+    const clientExists = await this.clientsRepository.findOne({
+      where: { id },
+    });
+    if (!clientExists) {
+      throw new NotFoundException(`Cliente con id: ${id} no encontrado`);
+    }
+
+    const cleanClient = sanitizeObject(clientToUpdate);
+
+    // Condiciones para buscar si OTRO registro ya tiene estos datos
+    const conflictingConditions: any[] = [];
+
+    if (cleanClient.name) {
+      conflictingConditions.push({ name: cleanClient.name, id: Not(id) });
+    }
+    if (cleanClient.sap_id) {
+      conflictingConditions.push({ sap_id: cleanClient.sap_id, id: Not(id) });
+    }
+    if (cleanClient.microsip_id) {
+      conflictingConditions.push({
+        microsip_id: cleanClient.microsip_id,
+        id: Not(id),
+      });
+    }
+
+    // Si hay campos a validar, buscamos coincidencias en otros registros
+    if (conflictingConditions.length > 0) {
+      const existingClient = await this.clientsRepository.findOne({
+        where: conflictingConditions,
+      });
+
+      if (existingClient) {
+        if (cleanClient.name && existingClient.name === cleanClient.name) {
+          throw new ConflictException('La Razón Social ya existe.');
+        }
+        if (
+          cleanClient.sap_id &&
+          existingClient.sap_id === cleanClient.sap_id
+        ) {
+          throw new ConflictException(
+            'La clave SAP ya se encuentra registrada.',
+          );
+        }
+        if (
+          cleanClient.microsip_id &&
+          existingClient.microsip_id === cleanClient.microsip_id
+        ) {
+          throw new ConflictException(
+            'La clave Microsip ya se encuentra registrada.',
+          );
+        }
+      }
+    }
+
+    Object.assign(clientExists, cleanClient);
+
+    const updatedClient = await this.clientsRepository.save(clientExists);
+
+    return {
+      message: 'Usuario actualizado exitosamente.',
+      client: updatedClient,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  //---------------------------------------//
+  async remove(id: string) {
+    const status = false;
+
+    const client: Client | undefined = await this.clientsRepository.preload({
+      id,
+      status,
+    });
+
+    if (!client) {
+      throw new NotFoundException(`Cliente con id: ${id} no encontrado`);
+    }
+
+    const deactivatedClient = await this.clientsRepository.save(client);
+
+    return {
+      message: 'Cliente desactivado exitosamente.',
+      client,
+    };
   }
 }
