@@ -14,7 +14,6 @@ import { PORT } from './config/envs.js';
 
 //-------------------------------------------------//
 //-------------------------------------------------//
-//-------------------------------------------------//
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

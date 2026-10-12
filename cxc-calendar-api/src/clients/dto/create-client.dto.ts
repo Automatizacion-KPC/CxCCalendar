@@ -38,7 +38,6 @@ export class CreateClientDto {
     description: 'Clave SAP.',
     example: 'C00001.',
   })
-  @IsNotEmpty()
   @IsString()
   @Length(6)
   @Matches(/^C\d{5}$/, {
@@ -51,10 +50,18 @@ export class CreateClientDto {
     description: 'Clave Microsip.',
     example: 'PCM00001.',
   })
-  @IsNotEmpty()
   @IsString()
   @Length(8)
   microsip_id: string;
+
+  @ApiProperty({
+    description: 'Vendedor.',
+    example: 'VENTAS 3',
+  })
+  @IsNotEmpty()
+  @IsString()
+  @Length(8)
+  seller: string;
 
   @ApiProperty({
     description: 'Siglas del estatus de Gestión.',

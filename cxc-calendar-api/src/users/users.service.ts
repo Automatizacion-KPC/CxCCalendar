@@ -21,6 +21,8 @@ import { User } from './entities/user.entity.js';
 
 import { BCRYPT_SALT_ROUNDS } from '../config/envs.js';
 
+//-------------------------------------------------//
+//-------------------------------------------------//
 @Injectable()
 export class UsersService {
   constructor(

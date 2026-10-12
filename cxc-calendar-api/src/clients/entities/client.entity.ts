@@ -13,7 +13,6 @@ export class Client {
     type: 'varchar',
     length: 15,
     nullable: false,
-    unique: true,
   })
   gov_id: string;
 
@@ -44,6 +43,12 @@ export class Client {
     length: 2,
   })
   management_status: string;
+
+  @Column({
+    type: 'varchar',
+    length: 8,
+  })
+  seller: string;
 
   @Column({
     type: 'boolean',

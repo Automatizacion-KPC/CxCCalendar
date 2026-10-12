@@ -12,6 +12,8 @@ import { UsersController } from './users.controller.js';
 //--------------------Entities---------------------//
 import { User } from './entities/user.entity.js';
 
+//-------------------------------------------------//
+//-------------------------------------------------//
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
