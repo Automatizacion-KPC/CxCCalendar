@@ -1,15 +1,20 @@
 //-------------------------------------------------//
 //---------------------Librerias-------------------//
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 //-------------------------------------------------//
 //-------------------------------------------------//
 @Entity({ name: 'clients' })
+@Index('idx_gov_id',['gov_id'],{
+  unique: true,
+  where: `"gov_id" <> 'XAXX010101000'`
+})
 export class Client {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
+    name: 'gov_id',
     type: 'varchar',
     length: 15,
     nullable: false,

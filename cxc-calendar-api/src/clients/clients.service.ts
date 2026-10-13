@@ -34,12 +34,19 @@ export class ClientsService {
     // Limpia todas las propiedades tipo string del DTO a mayúsculas, sin acentos ni especiales
     const cleanClient = sanitizeObject(newClient);
 
+    // Construimos las condiciones de búsqueda iniciales
+    const whereConditions: any[] = [
+      { name: cleanClient.name },
+      { sap_id: cleanClient.sap_id },
+      { microsip_id: cleanClient.microsip_id },
+    ];
+
+    if (cleanClient.gov_id && cleanClient.gov_id !== 'XAXX010101000') {
+      whereConditions.push({ gov_id: cleanClient.gov_id });
+    }
+
     const clientFound: Client | null = await this.clientsRepository.findOne({
-      where: [
-        { name: cleanClient.name },
-        { sap_id: cleanClient.sap_id },
-        { microsip_id: cleanClient.microsip_id },
-      ],
+      where: whereConditions,
     });
 
     if (clientFound) {
@@ -53,6 +60,12 @@ export class ClientsService {
         throw new ConflictException(
           'La clave Microsip ya se encuentra registrada.',
         );
+      }
+      if (
+        cleanClient.gov_id !== 'XAXX010101000' &&
+        clientFound.gov_id === cleanClient.gov_id
+      ) {
+        throw new ConflictException('El RFC ya se encuentra registrado.');
       }
     }
 
@@ -137,6 +150,12 @@ export class ClientsService {
         id: Not(id),
       });
     }
+    if (cleanClient.gov_id && cleanClient.gov_id !== 'XAXX010101000') {
+      conflictingConditions.push({
+        gov_id: cleanClient.gov_id,
+        id: Not(id),
+      });
+    }
 
     // Si hay campos a validar, buscamos coincidencias en otros registros
     if (conflictingConditions.length > 0) {
@@ -163,6 +182,13 @@ export class ClientsService {
           throw new ConflictException(
             'La clave Microsip ya se encuentra registrada.',
           );
+        }
+        if (
+          cleanClient.gov_id &&
+          cleanClient.gov_id !== 'XAXX010101000' &&
+          existingClient.gov_id === cleanClient.gov_id
+        ) {
+          throw new ConflictException('El RFC ya se encuentra registrado.');
         }
       }
     }
