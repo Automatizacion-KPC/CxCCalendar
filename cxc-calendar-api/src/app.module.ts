@@ -19,9 +19,11 @@ import { LoggerMiddleware } from './middlewares/logger.middleware.js';
 //--------------------Modulos----------------------//
 import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
+import { ClientsModule } from './clients/clients.module.js';
+import { ManagementStatusCatalogModule } from './management-status-catalog/management-status-catalog.module.js';
+import { CalendarModule } from './calendar/calendar.module.js';
 
 import { JWT_SECRET } from './config/envs.js';
-import { ClientsModule } from './clients/clients.module.js';
 
 //-------------------------------------------------//
 //-------------------------------------------------//
@@ -43,6 +45,8 @@ import { ClientsModule } from './clients/clients.module.js';
     AuthModule,
     UsersModule,
     ClientsModule,
+    ManagementStatusCatalogModule,
+    CalendarModule,
   ],
   controllers: [AppController],
   providers: [AppService],
