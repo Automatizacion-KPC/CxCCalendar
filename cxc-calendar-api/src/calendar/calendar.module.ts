@@ -11,9 +11,13 @@ import { CalendarController } from './calendar.controller.js';
 //-------------------------------------------------//
 //--------------------Entities---------------------//
 import { Calendar } from './entities/calendar.entity.js';
+import { Client } from '../clients/entities/client.entity.js';
+import { ManagementStatusCatalog } from '../management-status-catalog/entities/management-status-catalog.entity.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Calendar])],
+  imports: [
+    TypeOrmModule.forFeature([Calendar, Client, ManagementStatusCatalog]),
+  ],
   controllers: [CalendarController],
   providers: [CalendarService],
 })
