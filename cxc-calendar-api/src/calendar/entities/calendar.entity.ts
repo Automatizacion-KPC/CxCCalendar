@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { ManagementStatusCatalog } from '../../management-status-catalog/entities/management-status-catalog.entity.js';
+import { Client } from '../../clients/entities/client.entity.js';
 
 //-------------------------------------------------//
 //-------------------------------------------------//
@@ -17,6 +18,13 @@ import { ManagementStatusCatalog } from '../../management-status-catalog/entitie
 export class Calendar {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @ManyToOne(() => Client, (client) => client.calendars, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'id_client' })
+  client: Client;
 
   @Column({
     type: 'date',
@@ -39,7 +47,7 @@ export class Calendar {
 
   @ManyToOne(() => ManagementStatusCatalog, (status) => status.calendars, {
     nullable: false,
-    onDelete: 'RESTRICT', // Evita que borren un estatus si hay visitas usándolo
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'id_management_status' })
   status: ManagementStatusCatalog;

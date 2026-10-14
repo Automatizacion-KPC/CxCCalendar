@@ -1,13 +1,21 @@
 //-------------------------------------------------//
 //---------------------Librerias-------------------//
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  OneToMany,
+} from 'typeorm';
+
+import { Calendar } from '../../calendar/entities/calendar.entity.js';
 
 //-------------------------------------------------//
 //-------------------------------------------------//
 @Entity({ name: 'clients' })
-@Index('idx_gov_id',['gov_id'],{
+@Index('idx_gov_id', ['gov_id'], {
   unique: true,
-  where: `"gov_id" <> 'XAXX010101000'`
+  where: `"gov_id" <> 'XAXX010101000'`,
 })
 export class Client {
   @PrimaryGeneratedColumn('uuid')
@@ -60,4 +68,7 @@ export class Client {
     default: true,
   })
   status: boolean;
+
+  @OneToMany('Calendar', (calendar: Calendar) => calendar.client)
+  calendars: Calendar[];
 }

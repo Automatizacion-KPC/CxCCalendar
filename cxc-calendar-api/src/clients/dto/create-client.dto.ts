@@ -56,11 +56,11 @@ export class CreateClientDto {
 
   @ApiProperty({
     description: 'Vendedor.',
-    example: 'VENTAS 3',
+    example: 'VENTAS_3',
   })
   @IsNotEmpty()
   @IsString()
-  @Length(8)
+  @MaxLength(8)
   seller: string;
 
   @ApiProperty({
